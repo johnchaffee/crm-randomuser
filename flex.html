@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- <script
+      src="/livereload.js?mindelay=10&amp;v=2&amp;port=53783&amp;path=livereload"
+      data-no-instant
+      defer
+    ></script> -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+    <!-- <link rel="stylesheet" type="text/css" href="/css/prism.css"> -->
+    <link rel="stylesheet" type="text/css" href="./css/stylesheet.css" />
+
+    <!-- <link rel="icon" href="https://www.zipwhip.com/wp-content/uploads/2018/10/cropped-zw-mark-color-1-270x270-150x150.png" sizes="32x32">
+  <link rel="icon" href="https://www.zipwhip.com/wp-content/uploads/2018/10/cropped-zw-mark-color-1-270x270.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="https://www.zipwhip.com/wp-content/uploads/2018/10/cropped-zw-mark-color-1-270x270.png">
+  <meta name="msapplication-TileImage" content="https://www.zipwhip.com/wp-content/uploads/2018/10/cropped-zw-mark-color-1-270x270.png"> -->
+
+    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-24958618-42"></script>
+  <script>
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag() {
+          dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'UA-24958618-42');
+  </script> -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <!-- <script src="/js/prism.js"></script> -->
+
+    <title>Zipwhip Developer Portal | Flex CRM</title>
+  </head>
+  <body>
+    <div class="container">
+      <div id="main-column" class="col-sm-12">
+        <!-- <div id="loginPrompt">
+  <p>
+    You must
+    <a
+      class="btn btn-orange btn-sm"
+      data-toggle="modal"
+      data-target="#loginModal"
+      href="#"
+      >Login</a
+    >
+    and fetch a session key to try this function.
+  </p>
+</div>
+
+
+<div class="modal fade" id="loginModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h4 class="modal-title">Login to Zipwhip</h4>
+        <button type="button" class="close" data-dismiss="modal">
+          &times;
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <form
+          class="border p-4 bg-light"
+          action="https://api.zipwhip.com/user/login"
+          method="POST"
+        >
+          <div class="form-group">
+            <label for="username">Username:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="username"
+              placeholder="username@2065551234"
+              autocomplete="username"
+              value=""
+            />
+          </div>
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              autocomplete="current-password"
+              value=""
+            />
+          </div>
+          <input
+            type="submit"
+            class="btn btn-orange"
+            data-dismiss="modal"
+            id="login"
+            value="Login"
+          />
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  
+  
+  $(document).ready(function () {
+    console.log("LOGIN MODAL -> loginPrompt()");
+    loginPrompt();
+
+    
+    $("#login").click(function (event) {
+      console.log("#login clicked");
+      event.preventDefault();
+      username = $("#username").val();
+      password = $("#password").val();
+      console.log("username: " + username);
+
+      
+      const apiUrl = "https://api.zipwhip.com/user/login";
+      
+      const bodyParams = new URLSearchParams({
+        username: username,
+        password: password,
+      });
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: bodyParams,
+      };
+      fetch(apiUrl, requestOptions)
+        
+        .then((response) => response.json())
+        .then((result) => {
+          console.log("SUCCESS");
+          console.log("result.success: " + result.success);
+          console.log("result: " + JSON.stringify(result, undefined, 2));
+          if (result.success == true) {
+            
+            setCookie("username", username, 30);
+            setCookie("session", result.response, 30);
+            console.log("result.success == true: Cookies Stored");
+            
+            if (window.location.pathname.match(/.*crm|webhooks/)) {
+              window.location.reload(true);
+            }
+          } else {
+            
+            alert("Invalid login");
+            console.log("else: " + result.response);
+          }
+        })
+        .catch((error) => {
+          console.log("CATCH");
+          console.log(
+            ".catch JSON.stringify(error, undefined, 2): \n" +
+              JSON.stringify(error, undefined, 2)
+          );
+          console.log("error", error);
+        })
+        .finally(() => {
+          console.log("FINALLY");
+          session = getCookie("session");
+          console.log("LOGIN MODAL: updateLoginNav()");
+          updateLoginNav();
+          console.log("LOGIN MODAL: loginPrompt()");
+          loginPrompt();
+          console.log("LOGIN MODAL: updateSessionField()");
+          updateSessionField();
+        });
+      
+    });
+  });
+
+  
+  function loginPrompt() {
+    $("#loginPrompt").ready(function () {
+      console.log("#loginPrompt.ready");
+      if (session != "" && session != null) {
+        console.log(
+          "#loginPrompt: User is logged in. Hiding #loginPrompt element."
+        );
+        $("#loginPrompt").hide();
+      } else {
+        console.log(
+          "#loginPrompt: User is not logged in. Showing #loginPrompt element."
+        );
+        $("#loginPrompt").show();
+      }
+    });
+  }
+  
+</script>
+ -->
+        <div>
+          <h3 class="float-left mb-3">CRM</h3>
+          <input
+            type="text"
+            class="form-control float-right mt-3"
+            style="width: 300px"
+            id="myInput"
+            placeholder="Search contacts..."
+          />
+        </div>
+
+        <table class="table-sm" id="myTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+            </tr>
+          </thead>
+          <tbody id="contacts-table-body"></tbody>
+        </table>
+
+        <script src="./js/randomusers.js"></script>
+
+        <script>
+          $(document).ready(function () {
+            console.log(
+              'document ready: fetch("https://randomuser.me/api/?results=25&nat=us"'
+            )
+
+            fetch("https://randomuser.me/api/?results=25&nat=us")
+              .then((response) => response.json())
+              .then((result) => {
+                console.log("RESULT.RESULTS")
+                console.log(result.results)
+
+                if (result.results.length > 0) {
+                  contacts = result.results
+                } else {
+                  alert(result.response)
+                  console.log("else: " + result.response)
+                }
+              })
+              .catch((error) => {
+                console.log("CATCH")
+                console.log(
+                  ".catch JSON.stringify(error, undefined, 2): \n" +
+                    JSON.stringify(error, undefined, 2)
+                )
+                console.log("error", error)
+              })
+              .finally(() => {
+                console.log("FINALLY")
+
+                buildTable(contacts)
+              })
+
+            $("#myInput").on("keyup", function () {
+              let value = $(this).val().toLowerCase()
+
+              $("#contacts-table-body tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+              })
+            })
+          })
+
+          function buildTable(contacts) {
+            $("#contacts").ready(function () {
+              let start = Date.now()
+              contacts.sort(function (a, b) {
+                var nameA = a.name.first + a.name.last || ""
+                nameA = nameA.toUpperCase()
+                var nameB = b.name.first + b.name.last || ""
+                nameB = nameB.toUpperCase()
+                if (nameA < nameB) {
+                  return -1
+                }
+                if (nameA > nameB) {
+                  return 1
+                }
+
+                return 0
+              })
+
+              let tableRows = ""
+
+              contacts.forEach((contact) => {
+                let number = removeSpaces(contact.phone)
+                let email = contact.email
+                let fullName = (
+                  contact.name.first +
+                  " " +
+                  contact.name.last
+                ).trim()
+
+                tableRows +=
+                  "<tr>" +
+                  '<td name="fullName"><a class="text-body" href="../flex-crm-details/?nat=us&seed=' +
+                  formatNumber(number) +
+                  '">' +
+                  fullName +
+                  "</a></td>" +
+                  '<td name="email">' +
+                  email +
+                  "</td>" +
+                  '<td name="phone">' +
+                  formatNumber(number) +
+                  "</td>" +
+                  "</tr>"
+              })
+              $("#contacts-table-body").html(tableRows)
+            })
+          }
+        </script>
+      </div>
+    </div>
+    <script src="./js/script.js"></script>
+  </body>
+</html>
