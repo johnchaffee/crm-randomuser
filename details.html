@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" type="text/css" href="./css/stylesheet.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <title>Twilio Flex CRM Details</title>
+  </head>
+  <body>
+    <div class="container">
+      <div id="main-column" class="col-sm-12">
+        <div class="row">
+          <div class="col">
+            <div class="pt-3">
+              <div id="contact-details" class="border p-4 bg-light">
+                <p>Put contact details here</p>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="pt-3">
+              <form id="claim-form" class="border p-4 bg-light" action="#">
+                <h4>Pickup Time</h4>
+                <div class="form-group">
+                  <input id="date" type="date" name="date" class="mb-2" /><br />
+                  <input
+                    id="time"
+                    type="time"
+                    name="time"
+                    value="09:00"
+                  /><br />
+                  <a
+                    id="confirm-order"
+                    class="submit btn btn-orange mt-3"
+                    href="#"
+                    >Confirm Order & Pickup Time</a
+                  >
+                </div>
+              </form>
+            </div>
+            <div
+              id="success-alert"
+              class="mt-3 alert alert-success alert-dismissible"
+              style="display: none"
+            >
+              <button id="close-alert" type="button" class="close">
+                &times;
+              </button>
+              <strong>Order Placed</strong>
+            </div>
+            <div
+              id="failed-alert"
+              class="mt-3 alert alert-danger alert-dismissible"
+              style="display: none"
+            >
+              <button id="close-alert" type="button" class="close">
+                &times;
+              </button>
+              <strong>We're out of hot dogs!</strong>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          $(document).ready(function () {
+            const params = window.location.search
+            console.log("PARAMS: " + params)
+            const seed = getParam("seed")
+            console.log("getParams SEED: " + seed)
+            let notes = ""
+            if (seed == "+12063996576") {
+              notes = "Loves Hot Dogs"
+            } else {
+              let items = ["Pizza", "a Hamburger", "a Salad", "Ice Cream"]
+              let item = items[Math.floor(Math.random() * items.length)]
+              notes = "Typically orders " + item
+            }
+
+            function getParam(paramName) {
+              let query = window.location.search.substring(1)
+              let params = query.split("&")
+              for (let i = 0; i < params.length; i++) {
+                let pair = params[i].split("=")
+                if (decodeURIComponent(pair[0]) == paramName) {
+                  return decodeURIComponent(pair[1])
+                }
+              }
+              console.log("Query param %s not found", paramName)
+            }
+
+            let apiUrl =
+              "https://randomuser.me/api/?nat=us&seed=" +
+              encodeURIComponent(seed)
+            if (seed == "Anonymous") {
+              apiUrl = "https://randomuser.me/api/?nat=us"
+            }
+            console.log("APIURL: " + apiUrl)
+
+            fetch(apiUrl)
+              .then((response) => response.json())
+              .then((result) => {
+                console.log("RESULT.RESULTS")
+                console.log(result.results)
+
+                if (result.results.length > 0) {
+                  contacts = result.results
+                  console.log("contacts = RESULT.RESULTS")
+                  console.log(contacts)
+                } else {
+                  alert(result.response)
+                  console.log("else: " + result.response)
+                }
+              })
+              .catch((error) => {
+                console.log("CATCH")
+                console.log(
+                  ".catch JSON.stringify(error, undefined, 2): \n" +
+                    JSON.stringify(error, undefined, 2)
+                )
+                console.log("error", error)
+              })
+              .finally(() => {
+                console.log("FINALLY")
+
+                buildTable(contacts)
+              })
+
+            function buildTable(contacts) {
+              console.log("BUILDTABLE")
+              console.log(contacts)
+              let contact = contacts[0]
+              console.log(contact)
+              let fullName = contact.name.first + " " + contact.name.last
+              $("#contact-details").ready(function () {
+                let contactDetails = ""
+                contactDetails +=
+                  '<p><img src="' +
+                  contact.picture.large +
+                  '" alt="Picture"></p>' +
+                  "<h3>" +
+                  contact.name.title +
+                  ". " +
+                  fullName +
+                  "</h3>" +
+                  "<p>Ph: " +
+                  formatNumber(contact.phone) +
+                  "<br>Email: " +
+                  contact.email +
+                  "</p>" +
+                  "<p>" +
+                  contact.location.street.number +
+                  ". " +
+                  contact.location.street.name +
+                  "<br>" +
+                  contact.location.city +
+                  ", " +
+                  contact.location.state +
+                  " " +
+                  contact.location.postcode +
+                  "</p>" +
+                  "<hr>" +
+                  "<p>" +
+                  notes +
+                  "<p>"
+                console.log("CONTACT DETAILS:")
+                console.log(contactDetails)
+                $("#contact-details").html(contactDetails)
+              })
+            }
+
+            let rightNow = new Date()
+            console.log("RIGHTNOW: " + rightNow)
+            let year = rightNow.getFullYear()
+            console.log("year: " + year)
+            let month = rightNow.getMonth() + 1
+            month = ("0" + month).slice(-2)
+            console.log("month: " + month)
+            let day = rightNow.getDate()
+            day = ("0" + day).slice(-2)
+            console.log("day: " + day)
+            let myDate = year + "-" + month + "-" + day
+            console.log("myDate: " + myDate)
+            $("#date").attr("value", myDate)
+
+            $("#confirm-order").click(function (event) {
+              event.preventDefault()
+              $("#confirm-order").attr("disabled", true)
+              $(".alert").hide()
+              console.log("#confirm-order clicked")
+
+              if ($("#hotdog").is(":checked")) {
+                $("#failed-alert").fadeIn("slow")
+              } else {
+                $("#success-alert").fadeIn("slow")
+              }
+              $("#confirm-order").attr("disabled", false)
+            })
+
+            $("#hotdog").click(function (event) {
+              $(".alert").hide()
+              console.log("#hotdog clicked")
+              $("#failed-alert").fadeIn("slow")
+            })
+
+            console.log("DOCUMENT READY")
+          })
+        </script>
+      </div>
+    </div>
+    <script src="./js/script.js"></script>
+  </body>
+</html>
