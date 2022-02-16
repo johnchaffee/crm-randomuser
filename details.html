@@ -74,16 +74,11 @@
             console.log("PARAMS: " + params)
             const seed = getParam("seed")
             console.log("getParams SEED: " + seed)
-            let notes = ""
-            if (seed == "+12063996576") {
-              notes = "Loves Hot Dogs"
-            } else {
-              let rides = ["Economy", "Deluxe", "Carpool"]
-              let ride = rides[Math.floor(Math.random() * rides.length)]
-              let ratings = ["3 Stars", "4 Stars", "5 Stars"]
-              let rating = ratings[Math.floor(Math.random() * ratings.length)]
-              notes = `Rating: <b>${rating}</b><br>Preferred ride: <b>${ride}</b>`
-            }
+            let rides = ["Economy", "Deluxe", "Carpool"]
+            let ride = rides[Math.floor(Math.random() * rides.length)]
+            let ratings = ["3 Stars", "4 Stars", "5 Stars"]
+            let rating = ratings[Math.floor(Math.random() * ratings.length)]
+            let notes = `Rating: <b>${rating}</b><br>Preferred ride: <b>${ride}</b>`
 
             function getParam(paramName) {
               let query = window.location.search.substring(1)
