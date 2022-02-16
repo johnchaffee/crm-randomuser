@@ -40,7 +40,7 @@
                     id="confirm-order"
                     class="submit btn btn-orange mt-3"
                     href="#"
-                    >Confirm Order & Pickup Time</a
+                    >Confirm Pickup Time</a
                   >
                 </div>
               </form>
@@ -53,7 +53,7 @@
               <button id="close-alert" type="button" class="close">
                 &times;
               </button>
-              <strong>Order Placed</strong>
+              <strong>Ride Scheduled</strong>
             </div>
             <div
               id="failed-alert"
@@ -78,9 +78,11 @@
             if (seed == "+12063996576") {
               notes = "Loves Hot Dogs"
             } else {
-              let items = ["Pizza", "a Hamburger", "a Salad", "Ice Cream"]
-              let item = items[Math.floor(Math.random() * items.length)]
-              notes = "Typically orders " + item
+              let rides = ["Economy", "Deluxe", "Carpool"]
+              let ride = rides[Math.floor(Math.random() * rides.length)]
+              let ratings = ["3 Stars", "4 Stars", "5 Stars"]
+              let rating = ratings[Math.floor(Math.random() * ratings.length)]
+              notes = `Rating: <b>${rating}</b><br>Preferred ride: <b>${ride}</b>`
             }
 
             function getParam(paramName) {
