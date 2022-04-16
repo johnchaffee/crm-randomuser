@@ -1,3 +1,3 @@
-# twilio-flex-crm
+# crm-randomuser
  
-Sample CRM that runs in browser and can be embedded in Flex container.
+Sample CRM that runs in browser and uses randomuser.me as db. Can be embedded in Flex CRMcontainer.
